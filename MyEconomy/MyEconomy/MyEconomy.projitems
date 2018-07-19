@@ -26,6 +26,9 @@
       <DependentUpon>CategoriesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Services\IDataService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\DataServiceMock.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\RandomGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Pages\CategoriesPage.xaml">

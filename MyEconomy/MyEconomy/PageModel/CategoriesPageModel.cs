@@ -1,5 +1,10 @@
 ﻿using FreshMvvm;
+using MyEconomy.Models;
+using MyEconomy.Services;
 using PropertyChanged;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Xamarin.Forms;
 
 namespace MyEconomy.PageModels
@@ -7,13 +12,17 @@ namespace MyEconomy.PageModels
     [AddINotifyPropertyChangedInterface] // uses fody for property changed
     public class CategoriesPageModel : FreshBasePageModel
     {
+        readonly IDataService _dataService = new DataServiceMock(); // Todo inject
 
         public CategoriesPageModel() // injected from IOC
         {
-            LabelText = "Test";
+            List<Category> categoryData = _dataService.GetCategories();
+            Categories = new ObservableCollection<Category>(categoryData);
+            LabelText = "Label";
         }
 
         public string LabelText { get; set; }
+        public ObservableCollection<Category> Categories;
 
         public override void Init(object initData)
         {
@@ -23,7 +32,6 @@ namespace MyEconomy.PageModels
         // Methods are automatically wired up to page
         protected override void ViewIsAppearing(object sender, System.EventArgs e)
         {
-            CoreMethods.DisplayAlert("Page is appearing", "", "Ok");
             base.ViewIsAppearing(sender, e);
         }
 
