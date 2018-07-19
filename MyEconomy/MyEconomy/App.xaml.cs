@@ -1,4 +1,5 @@
-using System;
+using FreshMvvm;
+using MyEconomy.PageModels;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -7,11 +8,17 @@ namespace MyEconomy
 {
 	public partial class App : Application
 	{
+        public string NavContainerName { get; private set; } = "mainContainer";
+
 		public App ()
 		{
 			InitializeComponent();
 
-			MainPage = new MainPage();
+            var tabbedNavigation = new FreshTabbedNavigationContainer(NavContainerName);
+            tabbedNavigation.AddTab <CategoriesPageModel> ("Categories", null);
+            MainPage = tabbedNavigation;
+
+            //MainPage = new MainPage();
 		}
 
 		protected override void OnStart ()
