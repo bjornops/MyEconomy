@@ -6,14 +6,14 @@
         <ScrollView>
             <StackLayout BackgroundColor="Crimson" VerticalOptions="Start" Padding="10,10">
                 <Label Text="{Binding LabelText}" />
-                <StackLayout BackgroundColor="Lavender" HeightRequest="400">
+                <StackLayout BackgroundColor="Lavender">
                     <ListView ItemsSource="{Binding Categories}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <ViewCell>
-                                    <StackLayout Orientation="Horizontal" Margin="5,5,5,5" BackgroundColor="Azure">
+                                    <StackLayout Orientation="Horizontal" Padding="5" BackgroundColor="Azure">
                                         <Label Text="{Binding Title}" VerticalTextAlignment="Center" FontAttributes="Bold" HorizontalOptions="StartAndExpand"/>
-                                        <!-- <Label Text="{Binding SumString}" VerticalTextAlignment="Center" /> -->
+                                        <Label Text="{Binding SumString}" VerticalTextAlignment="Center" />
                                     </StackLayout>
                                 </ViewCell>
                             </DataTemplate>

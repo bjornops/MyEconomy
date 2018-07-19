@@ -22,7 +22,7 @@ namespace MyEconomy.PageModels
         }
 
         public string LabelText { get; set; }
-        public ObservableCollection<Category> Categories;
+        public ObservableCollection<Category> Categories { get; private set; }
 
         public override void Init(object initData)
         {
