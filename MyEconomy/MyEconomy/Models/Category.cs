@@ -13,7 +13,7 @@ namespace MyEconomy.Models
         {
             get
             {
-                return CategorySum().ToString("0.00");
+                return CategorySum().ToString("N2");
             }
         }
 
