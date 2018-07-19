@@ -17,6 +17,8 @@ namespace MyEconomy.Services
             {
                 categories.Add(new Category(RandomGenerator.RandomTitle(), ""));
             }
+
+            categories = PopulateCategories(categories);
             
             return categories;
         }
@@ -28,7 +30,7 @@ namespace MyEconomy.Services
             for (int i = 0; i < numberOfTransactions; i++)
             {
                 Transaction transaction = GenerateTransaction();
-                categories[_random.Next(0, categories.Count - 1)].AddTransaction(transaction);
+                categories[_random.Next(0, categories.Count)].AddTransaction(transaction);
             }
 
             return categories;
