@@ -1,12 +1,21 @@
-﻿using System.Collections.Generic;
+﻿using PropertyChanged;
+using System.Collections.Generic;
 
 namespace MyEconomy.Models
 {
+    [AddINotifyPropertyChangedInterface]
     public class Category
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public List<Transaction> Transactions { get; } = new List<Transaction>();
+        public string SumString
+        {
+            get
+            {
+                return CategorySum().ToString("0.00");
+            }
+        }
 
         public Category(string title, string description)
         {
@@ -27,7 +36,7 @@ namespace MyEconomy.Models
             }
         }
 
-        public double Sum()
+        public double CategorySum()
         {
             double sum = 0;
             foreach(Transaction t in Transactions)
