@@ -1,4 +1,6 @@
-﻿using PropertyChanged;
+﻿using MyEconomy.Services;
+using PropertyChanged;
+using System;
 using System.Collections.Generic;
 
 namespace MyEconomy.Models
@@ -28,6 +30,16 @@ namespace MyEconomy.Models
             Transactions.Add(transaction);
         }
 
+        public void AddRecurringTransaction(Transaction transaction, DateTime startDate, DateTime endDate, string reccurence)
+        {
+            DateTime sampleDate = startDate;
+            while (sampleDate < endDate)
+            {
+                Transactions.Add(new Transaction(transaction.Amount, sampleDate, transaction.Title, transaction.Description));
+                sampleDate = RecurrenceService.GetSubsequentDate(sampleDate, RecurrenceService.TranslateAbbreviationToInterval(reccurence));
+            }
+        }
+
         public void RemoveTransaction(int index)
         {
             if(index >= 0 && index < Transactions.Count)
@@ -42,6 +54,19 @@ namespace MyEconomy.Models
             foreach(Transaction t in Transactions)
             {
                 sum += t.Amount;
+            }
+            return sum;
+        }
+
+        public double CategorySum(DateTime startDate, DateTime endDate)
+        {
+            if (startDate > endDate)
+                throw new ArgumentException("End date must be later than start date.");
+            double sum = 0;
+            foreach (Transaction t in Transactions)
+            {
+                if(t.Date >= startDate && t.Date <= endDate)
+                    sum += t.Amount;
             }
             return sum;
         }
