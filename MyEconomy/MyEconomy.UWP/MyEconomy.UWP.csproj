@@ -151,7 +151,7 @@
       <Version>2.2.4</Version>
     </PackageReference>
     <PackageReference Include="OxyPlot.Xamarin.Forms">
-      <Version>1.0.0</Version>
+      <Version>1.1.0-unstable0011</Version>
     </PackageReference>
     <PackageReference Include="PropertyChanged.Fody">
       <Version>2.4.0</Version>

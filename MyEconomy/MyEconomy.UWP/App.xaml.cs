@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
@@ -52,6 +53,11 @@ namespace MyEconomy.UWP
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
+                // Workaround for oxyplot not rendering in release mode
+                var assembliesToInclude = new List<Assembly>
+                {
+                    typeof(OxyPlot.Xamarin.Forms.Platform.UWP.PlotViewRenderer).GetTypeInfo().Assembly
+                };
                 Xamarin.Forms.Forms.Init(e);
                 OxyPlot.Xamarin.Forms.Platform.UWP.PlotViewRenderer.Init();
 
