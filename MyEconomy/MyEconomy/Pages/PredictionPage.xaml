@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MyEconomy.Pages.PredictionPage"
+             xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout BackgroundColor="Crimson" Padding="10,10">
+                <oxy:PlotView HorizontalOptions="FillAndExpand" VerticalOptions="Start"
+                    Model="{Binding PredictionPlotModel}" HeightRequest="300" />
+                <Label Text="{Binding LabelText}" />
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
+</ContentPage>

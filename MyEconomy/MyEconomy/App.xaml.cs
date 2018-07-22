@@ -16,6 +16,7 @@ namespace MyEconomy
 
             var tabbedNavigation = new FreshTabbedNavigationContainer(NavContainerName);
             tabbedNavigation.AddTab <CategoriesPageModel> ("Categories", null);
+            tabbedNavigation.AddTab<PredictionPageModel>("Prediction", null);
             MainPage = tabbedNavigation;
 
             //MainPage = new MainPage();
