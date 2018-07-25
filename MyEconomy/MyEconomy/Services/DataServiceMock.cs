@@ -25,7 +25,7 @@ namespace MyEconomy.Services
 
         private List<Category> PopulateCategories(List<Category> categories)
         {
-            int numberOfTransactions = 4 * categories.Count;
+            int numberOfTransactions = 10 * categories.Count;
 
             List<Transaction> transactions = new List<Transaction>();
             for (int i = 0; i < numberOfTransactions; i++)
@@ -46,6 +46,8 @@ namespace MyEconomy.Services
         private Transaction GenerateTransaction()
         {
             double amount = _random.NextDouble() * 1000;
+            if (_random.NextDouble() < 0.3)
+                amount = -amount;
             Transaction transaction = new Transaction(amount, RandomGenerator.RandomDateTime(), RandomGenerator.RandomTitle());
 
             return transaction;
