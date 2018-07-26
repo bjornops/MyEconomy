@@ -150,6 +150,12 @@
     <PackageReference Include="FreshMvvm">
       <Version>2.2.4</Version>
     </PackageReference>
+    <PackageReference Include="OxyPlot.Core">
+      <Version>2.0.0-unstable1035</Version>
+    </PackageReference>
+    <PackageReference Include="OxyPlot.Windows">
+      <Version>2.0.0-unstable1035</Version>
+    </PackageReference>
     <PackageReference Include="OxyPlot.Xamarin.Forms">
       <Version>1.1.0-unstable0011</Version>
     </PackageReference>

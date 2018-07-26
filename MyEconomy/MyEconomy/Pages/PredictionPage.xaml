@@ -8,7 +8,8 @@
             <StackLayout BackgroundColor="Crimson" Padding="10,10">
                 <oxy:PlotView HorizontalOptions="FillAndExpand" VerticalOptions="Start"
                     Model="{Binding PredictionPlotModel}" HeightRequest="300" />
-                <Label Text="{Binding LabelText}" />
+                <Entry Text="{Binding CurrentBalance, Mode=TwoWay}" Keyboard="Numeric" />
+                <Button Text="Refresh graph" Command="{Binding RefreshGraph}" />
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

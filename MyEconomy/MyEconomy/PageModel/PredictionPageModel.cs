@@ -8,6 +8,7 @@ using PropertyChanged;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MyEconomy.PageModels
@@ -21,13 +22,16 @@ namespace MyEconomy.PageModels
         {
 
         }
-
-        public PlotModel PredictionPlotModel { get; private set; }
+        //private PlotModel _predictionPlotModel;
+        public PlotModel PredictionPlotModel { get; set; } // { get { return _predictionPlotModel; } set { _predictionPlotModel = value; PredictionPlotModel.InvalidatePlot(false); } }
+        public double CurrentBalance { get; set; } = 0;
+        public DateTime FromDate { get; set; } = DateTime.UtcNow;
+        public DateTime ToDate { get; set; } = DateTime.UtcNow.AddDays(90);
 
         public override void Init(object initData)
         {
             //ApplyDefaultPlotModel();
-            PredictionPlotModel = GenerateBalancePlotModel(_dataService.GetCategories(), 10000);
+            PredictionPlotModel = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
             var x = 1;
         }
 
@@ -57,6 +61,37 @@ namespace MyEconomy.PageModels
                     await CoreMethods.PushPageModel<CategoriesPageModel>();
                 });
             }
+        }
+
+        public Command RefreshGraph
+        {
+            get
+            {
+                return new Command(async () =>
+                {
+                    // await Task.Run( () => UpdateGraph() );
+                    PredictionPlotModel.InvalidatePlot(false);
+                    PredictionPlotModel = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
+                    PredictionPlotModel.InvalidatePlot(false);
+                    await Task.Delay(20);
+                });
+            }
+        }
+
+        private void UpdateGraph()
+        {
+            PlotModel temp = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
+            /*
+            //if(PredictionPlotModel != null)
+            PredictionPlotModel.InvalidatePlot(true);
+            PredictionPlotModel.Series.Clear();
+            PredictionPlotModel = null;
+            //ApplyDefaultPlotModel(); //GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
+            //PredictionPlotModel.InvalidatePlot(true);
+            */
+            PredictionPlotModel = temp;
+            PredictionPlotModel.PlotView.InvalidatePlot();
+            //PredictionPlotModel.InvalidatePlot(true);
         }
 
         private void ApplyDefaultPlotModel()
@@ -91,19 +126,18 @@ namespace MyEconomy.PageModels
             return plotModel;
         }
 
-        private PlotModel GenerateBalancePlotModel(List<Category> categories, double currentBalance)
+        private PlotModel GenerateBalancePlotModel(List<Category> categories, double currentBalance, DateTime fromDate, DateTime toDate)
         {
             PlotModel plotModel = new PlotModel { Title = "Predicted balance" };
 
-            var minValue = DateTimeAxis.ToDouble(DateTime.UtcNow);
-            var maxValue = DateTimeAxis.ToDouble(DateTime.UtcNow.AddDays(90));
+            var minValue = DateTimeAxis.ToDouble(fromDate);
+            var maxValue = DateTimeAxis.ToDouble(toDate);
 
             plotModel.Axes.Add(new DateTimeAxis { Position = AxisPosition.Bottom, Minimum = minValue, Maximum = maxValue, StringFormat = "MMM" });
 
             plotModel.Series.Add(GenerateBalanceLineSeries(categories, currentBalance));
 
             return plotModel;
-            
         }
 
         private LineSeries GenerateBalanceLineSeries(List<Category> categories, double currentBalance)
