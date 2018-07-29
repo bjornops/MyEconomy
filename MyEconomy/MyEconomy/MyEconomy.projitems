@@ -35,6 +35,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\DataServiceMock.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RandomGenerator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\RecurrenceService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIModels\CategoryListElement.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Pages\CategoriesPage.xaml">

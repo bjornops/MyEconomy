@@ -10,6 +10,24 @@
                     Model="{Binding PredictionPlotModel}" HeightRequest="300" />
                 <Entry Text="{Binding CurrentBalance, Mode=TwoWay}" Keyboard="Numeric" />
                 <Button Text="Refresh graph" Command="{Binding RefreshGraph}" />
+
+                <StackLayout>
+                    <ListView ItemsSource="{Binding Categories}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell>
+                                    <StackLayout Orientation="Horizontal" Padding="5" BackgroundColor="Azure">
+                                        <Label Text="{Binding Category.Title}" VerticalTextAlignment="Center" FontAttributes="Bold" HorizontalOptions="StartAndExpand"/>
+                                        <Label Text="{Binding Category.SumString}" VerticalTextAlignment="Center" />
+                                        <Switch IsToggled="{Binding Selected, Mode=TwoWay}">
+                                            
+                                        </Switch>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackLayout>
             </StackLayout>
         </ScrollView>
     </ContentPage.Content>

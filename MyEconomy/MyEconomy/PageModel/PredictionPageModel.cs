@@ -1,12 +1,14 @@
 ﻿using FreshMvvm;
 using MyEconomy.Models;
 using MyEconomy.Services;
+using MyEconomy.UIModels;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -15,27 +17,40 @@ namespace MyEconomy.PageModels
     [AddINotifyPropertyChangedInterface] // uses fody for property changed
     public class PredictionPageModel : FreshBasePageModel
     {
-        readonly IDataService _dataService = new DataServiceMock(); // Todo inject
+        readonly IDataService _dataService;
 
         public PredictionPageModel() // injected from IOC
         {
-
+            _dataService = new DataServiceMock(); // Todo inject
         }
 
-        public PlotModel PredictionPlotModel { get; set; } // { get { return _predictionPlotModel; } set { _predictionPlotModel = value; PredictionPlotModel.InvalidatePlot(false); } }
+        public ObservableCollection<CategoryListElement> Categories { get; set; } = new ObservableCollection<CategoryListElement>();
+        public PlotModel PredictionPlotModel { get; set; } = new PlotModel();
         public double CurrentBalance { get; set; } = 0;
         public DateTime FromDate { get; set; } = DateTime.UtcNow;
         public DateTime ToDate { get; set; } = DateTime.UtcNow.AddDays(90);
 
         public override void Init(object initData)
         {
-            PredictionPlotModel = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
+            
         }
 
         // Methods are automatically wired up to page
         protected override void ViewIsAppearing(object sender, System.EventArgs e)
         {
             base.ViewIsAppearing(sender, e);
+
+            PopulateCategoryCollection(_dataService.GetCategories());
+            UpdateGraph();
+            //ApplyPlotModelToGraph(GenerateBalancePlotModel(Categories, CurrentBalance, FromDate, ToDate));
+        }
+
+        private void PopulateCategoryCollection(List<Category> categories)
+        {
+            foreach (Category category in categories)
+            {
+                Categories.Add(new CategoryListElement(category));
+            }
         }
 
         protected override void ViewIsDisappearing(object sender, System.EventArgs e)
@@ -63,17 +78,33 @@ namespace MyEconomy.PageModels
         private async void UpdateGraph()
         {
             PredictionPlotModel.Series.Clear();
+            PredictionPlotModel.Axes.Add(new DateTimeAxis
+            {
+                Position = AxisPosition.Bottom,
+                Minimum = DateTimeAxis.ToDouble(FromDate),
+                Maximum = DateTimeAxis.ToDouble(ToDate),
+                StringFormat = "MMM"
+            });
+            List<CategoryListElement> selectedElements = GetSelectedCategoryListElements();
+            foreach (CategoryListElement element in selectedElements)
+                PredictionPlotModel.Series.Add(GenerateLineSeries(element.Category));
             PredictionPlotModel.InvalidatePlot(false);
+        }
 
-            //PredictionPlotModel.InvalidatePlot(true);
-            //PredictionPlotModel.Series.Add(GenerateBalanceLineSeries(_dataService.GetCategories(), 10000));
-            PredictionPlotModel.InvalidatePlot(false);
+        private List<CategoryListElement> GetSelectedCategoryListElements()
+        {
+            List<CategoryListElement> categoryListElements = new List<CategoryListElement>();
+            foreach(CategoryListElement element in Categories)
+            {
+                if (element.Selected)
+                    categoryListElements.Add(element);
+            }
+            return categoryListElements;
         }
 
         private void ApplyDefaultPlotModel()
         {
-            List<Category> categories = _dataService.GetCategories();
-            Category category = categories[0];
+            Category category = Categories[0].Category;
 
             DateTime earliestDate = DateTime.MaxValue, latestDate = DateTime.MinValue;
 
@@ -102,7 +133,7 @@ namespace MyEconomy.PageModels
             return plotModel;
         }
 
-        private PlotModel GenerateBalancePlotModel(List<Category> categories, double currentBalance, DateTime fromDate, DateTime toDate)
+        private PlotModel GenerateBalancePlotModel(ObservableCollection<CategoryListElement> categories, double currentBalance, DateTime fromDate, DateTime toDate)
         {
             PlotModel plotModel = new PlotModel { Title = "Predicted balance" };
 
@@ -116,7 +147,7 @@ namespace MyEconomy.PageModels
             return plotModel;
         }
 
-        private LineSeries GenerateBalanceLineSeries(List<Category> categories, double currentBalance)
+        private LineSeries GenerateBalanceLineSeries(ObservableCollection<CategoryListElement> categories, double currentBalance)
         {
             LineSeries lineSeries = new LineSeries();
 
@@ -149,13 +180,13 @@ namespace MyEconomy.PageModels
             return filteredTransactions;
         }
 
-        private List<Transaction> MergeCategories(List<Category> categories)
+        private List<Transaction> MergeCategories(ObservableCollection<CategoryListElement> categories)
         {
             List<Transaction> mergedCategoryTransactions = new List<Transaction>();
 
-            foreach (Category category in categories)
+            foreach (CategoryListElement category in categories)
             {
-                mergedCategoryTransactions.AddRange(category.Transactions);
+                mergedCategoryTransactions.AddRange(category.Category.Transactions);
             }
 
             return mergedCategoryTransactions;
