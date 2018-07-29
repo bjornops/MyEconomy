@@ -7,7 +7,6 @@ using OxyPlot.Series;
 using PropertyChanged;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -22,7 +21,7 @@ namespace MyEconomy.PageModels
         {
 
         }
-        //private PlotModel _predictionPlotModel;
+
         public PlotModel PredictionPlotModel { get; set; } // { get { return _predictionPlotModel; } set { _predictionPlotModel = value; PredictionPlotModel.InvalidatePlot(false); } }
         public double CurrentBalance { get; set; } = 0;
         public DateTime FromDate { get; set; } = DateTime.UtcNow;
@@ -30,9 +29,7 @@ namespace MyEconomy.PageModels
 
         public override void Init(object initData)
         {
-            //ApplyDefaultPlotModel();
             PredictionPlotModel = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
-            var x = 1;
         }
 
         // Methods are automatically wired up to page
@@ -52,46 +49,25 @@ namespace MyEconomy.PageModels
 
         }
 
-        public Command AddQuote
-        {
-            get
-            {
-                return new Command(async () =>
-                {
-                    await CoreMethods.PushPageModel<CategoriesPageModel>();
-                });
-            }
-        }
-
         public Command RefreshGraph
         {
             get
             {
-                return new Command(async () =>
+                return new Command( () =>
                 {
-                    // await Task.Run( () => UpdateGraph() );
-                    PredictionPlotModel.InvalidatePlot(false);
-                    PredictionPlotModel = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
-                    PredictionPlotModel.InvalidatePlot(false);
-                    await Task.Delay(20);
+                    UpdateGraph();
                 });
             }
         }
 
-        private void UpdateGraph()
+        private async void UpdateGraph()
         {
-            PlotModel temp = GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
-            /*
-            //if(PredictionPlotModel != null)
-            PredictionPlotModel.InvalidatePlot(true);
             PredictionPlotModel.Series.Clear();
-            PredictionPlotModel = null;
-            //ApplyDefaultPlotModel(); //GenerateBalancePlotModel(_dataService.GetCategories(), CurrentBalance, FromDate, ToDate);
+            PredictionPlotModel.InvalidatePlot(false);
+
             //PredictionPlotModel.InvalidatePlot(true);
-            */
-            PredictionPlotModel = temp;
-            PredictionPlotModel.PlotView.InvalidatePlot();
-            //PredictionPlotModel.InvalidatePlot(true);
+            //PredictionPlotModel.Series.Add(GenerateBalanceLineSeries(_dataService.GetCategories(), 10000));
+            PredictionPlotModel.InvalidatePlot(false);
         }
 
         private void ApplyDefaultPlotModel()
@@ -202,34 +178,6 @@ namespace MyEconomy.PageModels
             }
 
             return accumulatedDataPoints;
-        }
-
-        private List<DataPoint> GetAccumulatedGroupedDataPoints(List<Transaction> transactions, double currentBalance)
-        {
-            transactions.Sort((x, y) => x.Date.CompareTo(y.Date));
-            List<DataPoint> dailyGroupedDataPoints = GetDateSummedDataPoints(transactions);
-
-            double dailySum = 0;
-            DateTime dateIterator = transactions[0].Date;
-
-            foreach (Transaction transaction in transactions)
-            {
-                if (transaction.Date == dateIterator)
-                    dailySum += transaction.Amount;
-                else
-                {
-                    dailyGroupedDataPoints.Add(new DataPoint(DateTimeAxis.ToDouble(dateIterator), dailySum));
-                    dateIterator = transaction.Date;
-                    dailySum += transaction.Amount;
-                }
-                if (transaction == transactions[transactions.Count - 1])
-                {
-                    dailySum += transaction.Amount;
-                    dailyGroupedDataPoints.Add(new DataPoint(DateTimeAxis.ToDouble(dateIterator), dailySum));
-                }
-            }
-
-            return dailyGroupedDataPoints;
         }
 
         private List<DataPoint> GetDateSummedDataPoints(List<Transaction> transactions)
