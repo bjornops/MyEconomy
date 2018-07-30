@@ -9,6 +9,14 @@ namespace MyEconomy.Models
         public string Description { get; set; }
         public DateTime Date { get; set; }
 
+        public string AmountString
+        {
+            get
+            {
+                return Amount.ToString("N2");
+            }
+        }
+
         public Transaction(double amount, DateTime date, string title = "Amount", string description = "")
         {
             Amount = amount;

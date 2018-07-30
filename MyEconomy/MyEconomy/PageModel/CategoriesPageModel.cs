@@ -12,17 +12,16 @@ namespace MyEconomy.PageModels
     [AddINotifyPropertyChangedInterface] // uses fody for property changed
     public class CategoriesPageModel : FreshBasePageModel
     {
-        readonly IDataService _dataService = new DataServiceMock(); // Todo inject
+        readonly IDataService _dataService;
 
         public CategoriesPageModel() // injected from IOC
         {
-            List<Category> categoryData = _dataService.GetCategories();
-            Categories = new ObservableCollection<Category>(categoryData);
+             _dataService = new DataServiceMock(); // Todo inject
             LabelText = "Label";
         }
 
         public string LabelText { get; set; }
-        public ObservableCollection<Category> Categories { get; private set; }
+        public ObservableCollection<Category> Categories { get; private set; } = new ObservableCollection<Category>();
 
         public override void Init(object initData)
         {
@@ -33,6 +32,13 @@ namespace MyEconomy.PageModels
         protected override void ViewIsAppearing(object sender, System.EventArgs e)
         {
             base.ViewIsAppearing(sender, e);
+            PopulateCategoryList(_dataService.GetCategories());
+        }
+
+        public void PopulateCategoryList(List<Category> categories)
+        {
+            foreach (Category category in categories)
+                Categories.Add(category);
         }
 
         protected override void ViewIsDisappearing(object sender, System.EventArgs e)
