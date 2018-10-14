@@ -3,6 +3,7 @@ using MyEconomy.Models;
 using MyEconomy.Services;
 using PropertyChanged;
 using System;
+using System.Runtime;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
@@ -14,9 +15,9 @@ namespace MyEconomy.PageModels
     {
         readonly IDataService _dataService;
 
-        public CategoriesPageModel() // injected from IOC
+        public CategoriesPageModel(IDataService dataService)
         {
-             _dataService = new DataServiceMock(); // Todo inject
+             _dataService = dataService;
             LabelText = "Label";
         }
 
@@ -52,15 +53,23 @@ namespace MyEconomy.PageModels
 
         }
 
-        public Command AddQuote
+        public Command AddNewTransactionCommand
         {
             get
             {
-                return new Command(async () =>
+                return new Command<string>(
+                    (category) =>
                 {
-                    await CoreMethods.PushPageModel<CategoriesPageModel>();
+                    Transaction t = new Transaction(200, DateTime.UtcNow, "TestTransaction");
+                    AddNewTransaction(Categories[0], t);
+                    //await CoreMethods.PushNewNavigationServiceModal();
                 });
             }
+        }
+
+        public void AddNewTransaction(Category category, Transaction transaction)
+        {
+            category.AddTransaction(transaction);
         }
 
     }

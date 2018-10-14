@@ -19,9 +19,9 @@ namespace MyEconomy.PageModels
     {
         readonly IDataService _dataService;
 
-        public PredictionPageModel() // injected from IOC
+        public PredictionPageModel(IDataService dataService)
         {
-            _dataService = new DataServiceMock(); // Todo inject
+            _dataService = dataService;
         }
 
         public ObservableCollection<CategoryListElement> Categories { get; set; } = new ObservableCollection<CategoryListElement>();
@@ -39,7 +39,7 @@ namespace MyEconomy.PageModels
         protected override void ViewIsAppearing(object sender, System.EventArgs e)
         {
             base.ViewIsAppearing(sender, e);
-
+            
             PopulateCategoryCollection(_dataService.GetCategories());
             UpdateGraph();
             //ApplyPlotModelToGraph(GenerateBalancePlotModel(Categories, CurrentBalance, FromDate, ToDate));
@@ -75,7 +75,7 @@ namespace MyEconomy.PageModels
             }
         }
 
-        private async void UpdateGraph()
+        private void UpdateGraph()
         {
             PredictionPlotModel.Series.Clear();
             PredictionPlotModel.Axes.Add(new DateTimeAxis
@@ -88,7 +88,7 @@ namespace MyEconomy.PageModels
             List<CategoryListElement> selectedElements = GetSelectedCategoryListElements();
             foreach (CategoryListElement element in selectedElements)
                 PredictionPlotModel.Series.Add(GenerateLineSeries(element.Category));
-            PredictionPlotModel.InvalidatePlot(false);
+            PredictionPlotModel.InvalidatePlot(true);
         }
 
         private List<CategoryListElement> GetSelectedCategoryListElements()

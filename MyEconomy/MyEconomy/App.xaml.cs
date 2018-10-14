@@ -1,5 +1,6 @@
 using FreshMvvm;
 using MyEconomy.PageModels;
+using MyEconomy.Services;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -14,6 +15,8 @@ namespace MyEconomy
 		{
 			InitializeComponent();
 
+            FreshIOC.Container.Register<IDataService, DataServiceMock>();
+            
             var tabbedNavigation = new FreshTabbedNavigationContainer(NavContainerName);
             tabbedNavigation.AddTab <CategoriesPageModel> ("Categories", null);
             tabbedNavigation.AddTab<PredictionPageModel>("Prediction", null);

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace MyEconomy.Services
 {
-    interface IDataService
+    public interface IDataService
     {
         List<Category> GetCategories();
     }

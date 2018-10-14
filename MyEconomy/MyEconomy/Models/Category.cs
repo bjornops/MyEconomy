@@ -40,6 +40,13 @@ namespace MyEconomy.Models
             }
         }
 
+        public void RemoveTransaction(Guid id)
+        {
+            var transaction = Transactions.Find(o => o.Id == id);
+            if (transaction != null)
+                Transactions.Remove(transaction);
+        }
+
         public void RemoveTransaction(int index)
         {
             if(index >= 0 && index < Transactions.Count)
